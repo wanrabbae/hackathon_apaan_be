@@ -82,6 +82,7 @@ class QuizCtrl extends Controller
     {
         $question = Question::find($id);
         $question->delete();
+        Answer::where('question_id', $id)->delete();
         return response()->json([
             'status_code' => 200, // 'status_code' => '200'
             'message' => 'Question deleted successfully',
@@ -136,7 +137,7 @@ class QuizCtrl extends Controller
                 $question = $questions[$i];
                 $answer = $answers[$i];
 
-                if ($question['correct_answer'] == $answer) {
+                if ($question['correct_answer'] == $answer["id"]) {
                     array_push($correctQuestions, $question);
                 } else {
                     array_push($incorrectQuestions, $question);

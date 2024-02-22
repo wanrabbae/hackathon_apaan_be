@@ -30,6 +30,8 @@ class AuthCtrl extends Controller
 
     public function register(Request $request)
     {
+        // overwrite password into bcrypt
+        $request->merge(['password' => bcrypt($request->password)]);
         $user = User::create($request->all());
         return response()->json($user, 201);
     }

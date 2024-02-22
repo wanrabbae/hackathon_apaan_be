@@ -11,6 +11,7 @@ class Quiz extends Model
 
     protected $guarded = [];
     protected $table = 'quizzes';
+    public $incrementing = false;
     // use timestamps = false
     public $timestamps = false;
 

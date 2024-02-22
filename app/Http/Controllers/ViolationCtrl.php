@@ -61,6 +61,7 @@ class ViolationCtrl extends Controller
                 }
                 $data->save();
             }
+            return response()->json($data, 201);
         } else {
             return response()->json(['error' => 'Data not found'], 404);
         }
