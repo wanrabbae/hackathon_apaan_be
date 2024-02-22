@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Answer extends Model
 {
     use HasFactory;
+
+    protected $guarded = [];
+    protected $table = 'answers';
+    public $timestamps = false;
 }
