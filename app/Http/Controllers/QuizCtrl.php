@@ -59,7 +59,21 @@ class QuizCtrl extends Controller
     // QUESTION
     public function createQuestion(Request $request)
     {
-        $question = Question::create($request->all());
+        $question = Question::create($request->except('answers', 'correctAnswer'));
+
+        if ($request->answers) {
+            foreach ($request->answers as $answer) {
+                // merge question_id to answer
+                $answer['question_id'] = $question->id;
+                $createAnswer = $question->answers()->create($answer);
+
+                // update correct_answer in question
+                if ($request->correctAnswer == $answer['text']) {
+                    $question->update(['correct_answer' => $createAnswer['id']]);
+                }
+            }
+        }
+
         return response()->json([
             'status_code' => 201, // 'status_code' => '201'
             'message' => 'Question created successfully',
@@ -71,6 +85,27 @@ class QuizCtrl extends Controller
     {
         $question = Question::find($id);
         $question->update($request->all());
+
+        if ($request->answers) {
+            foreach ($request->answers as $answer) {
+                if (isset($answer['id'])) {
+                    $updateAnswer = Answer::find($answer['id']);
+                    $updateAnswer->update($answer);
+
+                    if ($request->correctAnswer == $answer['text']) {
+                        $question->update(['correct_answer' => $updateAnswer['id']]);
+                    }
+                } else {
+                    $answer['question_id'] = $question->id;
+                    $createAnswer = $question->answers()->create($answer);
+
+                    if ($request->correctAnswer == $answer['text']) {
+                        $question->update(['correct_answer' => $createAnswer['id']]);
+                    }
+                }
+            }
+        }
+
         return response()->json([
             'status_code' => 200, // 'status_code' => '200'
             'message' => 'Question updated successfully',
